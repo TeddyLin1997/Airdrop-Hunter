@@ -34,16 +34,6 @@ Built with the **"Black Gold"** aesthetic, it offers a visually stunning interfa
   - Built-in support for donating Native tokens or ERC20 tokens to support the development.
   - Safe math implementation ensures accurate transfers.
 
-## 🛠️ Tech Stack
-
-- **Frontend**: React 18, Vite, TypeScript
-- **Styling**: Tailwind CSS, Lucide React
-- **Blockchain**: ethers.js v6, viem
-- **Design System**: OneBase Design System (Black/Gold)
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
