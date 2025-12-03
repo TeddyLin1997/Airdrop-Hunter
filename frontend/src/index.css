@@ -1,0 +1,202 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  width: 100%;
+  min-width: 375px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  font-family: 'Outfit', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  line-height: 1.5;
+  font-size: 14px;
+  font-weight: 400;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  text-decoration: none;
+  outline: none;
+}
+
+img {
+  user-select: none;
+}
+
+@layer base {
+  :root {
+    /* Default to Dark Mode (Black Gold) */
+    --background: 240 10% 3.9%;
+    /* #08080A */
+    --foreground: 0 0% 98%;
+    /* #FFFFFF */
+
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 45 93% 49%;
+    /* #F0B90B */
+    --primary-foreground: 240 11% 4%;
+
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 45 93% 49%;
+
+    --radius: 0.5rem;
+
+    /* Legacy variables for compatibility */
+    --color-bg: #08080A;
+    --color-text: #FFFFFF;
+    --color-primary: #F0B90B;
+    --color-bg-layout: #1d1e25;
+    --color-border: #4c4c4c;
+  }
+
+  .light {
+    /* Light Mode (Optional, if needed) */
+    --background: 0 0% 100%;
+    --foreground: 240 11% 4%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 11% 4%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 11% 4%;
+
+    --primary: 45 93% 49%;
+    --primary-foreground: 240 11% 4%;
+
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 45 93% 49%;
+
+    /* Legacy variables */
+    --color-bg: #FFFFFF;
+    --color-text: #08080A;
+    --color-primary: #F0B90B;
+    --color-bg-layout: #F8F8F8;
+    --color-border: #E5E7EB;
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+
+  /* System Dark Mode Preference (if no class is present, this might be tricky with Tailwind 'class' mode, 
+     but usually we rely on JS to set the class based on system pref. 
+     Since we have JS handling it, we can just rely on the .dark class) */
+  /* :root {
+    color: #FFFFFF;
+    background-color: #08080A;
+  } */
+}
+
+@media screen and (max-width: 1200px) {
+  :root {
+    font-size: 14px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  :root {
+    font-size: 12px;
+  }
+}
+
+@keyframes breathing {
+
+  0%,
+  100% {
+    transform: scale(0.9);
+  }
+
+  50% {
+    transform: scale(0.95);
+  }
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes marquee-reverse {
+  0% {
+    transform: translateX(-50%);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 120s linear infinite;
+}
+
+.animate-marquee-reverse {
+  animation: marquee-reverse 120s linear infinite;
+}
+
+.pause-on-hover:hover {
+  animation-play-state: paused;
+}

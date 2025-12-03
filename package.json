@@ -1,8 +1,17 @@
 {
-  "name": "generator-contract",
+  "name": "airdrop-hunter",
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox-viem": "^3.0.0",
     "hardhat": "^2.22.5"
+  },
+  "scripts": {
+    "compile": "hardhat compile",
+    "postcompile": "node scripts/copy-artifacts.js",
+    "test": "hardhat test",
+    "frontend:install": "cd frontend && pnpm install",
+    "frontend:dev": "cd frontend && pnpm run dev",
+    "frontend:build": "cd frontend && pnpm run build",
+    "frontend:preview": "cd frontend && pnpm run preview"
   },
   "dependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
