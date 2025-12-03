@@ -25,8 +25,9 @@ export const DonateToken: React.FC = () => {
     const [amount, setAmount] = useState<string>('');
     const [donating, setDonating] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [tokenInfo, setTokenInfo] = useState<{ symbol: string; balance: string; decimals: number } | null>(null);
+    const [tokenInfo, setTokenInfo] = useState<{ symbol: string; balance: string; decimals: number; rawBalance: bigint } | null>(null);
     const [nativeBalance, setNativeBalance] = useState<string>('0');
+    const [rawNativeBalance, setRawNativeBalance] = useState<bigint>(0n);
 
     // Get current chain info
     const currentChain = chainId ? getChain(parseInt(chainId, 10)) : null;
@@ -39,6 +40,7 @@ export const DonateToken: React.FC = () => {
 
             try {
                 const balance = await provider.getBalance(account);
+                setRawNativeBalance(balance);
                 setNativeBalance(ethers.formatEther(balance));
             } catch (err) {
                 console.error('Failed to load native balance:', err);
@@ -77,6 +79,7 @@ export const DonateToken: React.FC = () => {
                 symbol,
                 balance: formattedBalance,
                 decimals: Number(decimals),
+                rawBalance: balance,
             });
 
             showSnackbar(`Token loaded: ${symbol}`, 'success');
@@ -137,6 +140,7 @@ export const DonateToken: React.FC = () => {
 
             // Reload native balance
             const newBalance = await provider.getBalance(account);
+            setRawNativeBalance(newBalance);
             setNativeBalance(ethers.formatEther(newBalance));
             setAmount('');
         } catch (err) {
@@ -151,23 +155,21 @@ export const DonateToken: React.FC = () => {
     const handleDonateNativeCustom = async () => {
         if (!signer || !provider || !account || !amount) return;
 
-        const parsedAmount = parseFloat(amount);
-        if (isNaN(parsedAmount) || parsedAmount <= 0) {
-            showSnackbar('Please enter a valid amount', 'error');
-            return;
-        }
-
-        if (parsedAmount > parseFloat(nativeBalance)) {
-            showSnackbar('Amount exceeds balance', 'error');
-            return;
-        }
-
-        setDonating(true);
-        showSnackbar('Preparing donation transaction...', 'info');
-
         try {
-            const balance = await provider.getBalance(account);
+            // Validate amount format first
             const amountInWei = ethers.parseEther(amount);
+            if (amountInWei <= 0n) {
+                showSnackbar('Please enter a valid amount', 'error');
+                return;
+            }
+
+            if (amountInWei > rawNativeBalance) {
+                showSnackbar('Amount exceeds balance', 'error');
+                return;
+            }
+
+            setDonating(true);
+            showSnackbar('Preparing donation transaction...', 'info');
 
             // Estimate gas for the transaction by simulating it
             const gasLimit = await provider.estimateGas({
@@ -185,6 +187,7 @@ export const DonateToken: React.FC = () => {
             const gasCostWithBuffer = (estimatedGasCost * 150n) / 100n;
 
             // Check if user has enough balance for amount + gas + buffer
+            const balance = await provider.getBalance(account);
             if (balance < amountInWei + gasCostWithBuffer) {
                 showSnackbar('Insufficient balance to cover amount and gas fees', 'error');
                 setDonating(false);
@@ -207,12 +210,18 @@ export const DonateToken: React.FC = () => {
 
             // Reload native balance
             const newBalance = await provider.getBalance(account);
+            setRawNativeBalance(newBalance);
             setNativeBalance(ethers.formatEther(newBalance));
             setAmount('');
         } catch (err) {
             console.error('Donation failed:', err);
-            const errorMessage = (err as Error).message || 'Donation failed';
-            showSnackbar(errorMessage, 'error');
+            // Check for parse errors specifically
+            if ((err as Error).message.includes('invalid decimal')) {
+                showSnackbar('Invalid amount format', 'error');
+            } else {
+                const errorMessage = (err as Error).message || 'Donation failed';
+                showSnackbar(errorMessage, 'error');
+            }
         } finally {
             setDonating(false);
         }
@@ -260,23 +269,23 @@ export const DonateToken: React.FC = () => {
     const handleDonateERC20Custom = async () => {
         if (!signer || !tokenAddress || !amount || !tokenInfo) return;
 
-        const parsedAmount = parseFloat(amount);
-        if (isNaN(parsedAmount) || parsedAmount <= 0) {
-            showSnackbar('Please enter a valid amount', 'error');
-            return;
-        }
-
-        if (parsedAmount > parseFloat(tokenInfo.balance)) {
-            showSnackbar('Amount exceeds balance', 'error');
-            return;
-        }
-
-        setDonating(true);
-        showSnackbar('Preparing donation transaction...', 'info');
-
         try {
-            const contract = new ethers.Contract(tokenAddress, ERC20_ABI, signer);
             const amountInWei = ethers.parseUnits(amount, tokenInfo.decimals);
+
+            if (amountInWei <= 0n) {
+                showSnackbar('Please enter a valid amount', 'error');
+                return;
+            }
+
+            if (amountInWei > tokenInfo.rawBalance) {
+                showSnackbar('Amount exceeds balance', 'error');
+                return;
+            }
+
+            setDonating(true);
+            showSnackbar('Preparing donation transaction...', 'info');
+
+            const contract = new ethers.Contract(tokenAddress, ERC20_ABI, signer);
 
             showSnackbar('Please confirm the transaction in your wallet...', 'info');
             const tx = await contract.transfer(DONATE_ADDRESS, amountInWei);
@@ -294,8 +303,12 @@ export const DonateToken: React.FC = () => {
             setAmount('');
         } catch (err) {
             console.error('Donation failed:', err);
-            const errorMessage = (err as Error).message || 'Donation failed';
-            showSnackbar(errorMessage, 'error');
+            if ((err as Error).message.includes('invalid decimal')) {
+                showSnackbar('Invalid amount format', 'error');
+            } else {
+                const errorMessage = (err as Error).message || 'Donation failed';
+                showSnackbar(errorMessage, 'error');
+            }
         } finally {
             setDonating(false);
         }
