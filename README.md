@@ -2,7 +2,7 @@
 
 **The Ultimate Chain Interaction Tool for Airdrop Hunters & Developers.**
 
-![OneBase AirDrop Hunter](https://airdrop-hunter-onebase.zeabur.app/)
+[OneBase AirDrop Hunter](https://airdrop-hunter-onebase.zeabur.app/)
 
 ## ✨ Overview
 
