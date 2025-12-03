@@ -8,7 +8,7 @@ import type { AbiFunction, AbiParameter } from 'viem';
 
 interface InteractorProps {
     contracts: DeployedContract[];
-    onRemove: (address: string) => void;
+    onRemove: (address: string, chainId: string) => void;
 }
 
 export const ContractInteractor: React.FC<InteractorProps> = ({ contracts, onRemove }) => {
@@ -82,8 +82,8 @@ export const ContractInteractor: React.FC<InteractorProps> = ({ contracts, onRem
     };
 
     const confirmRemove = () => {
-        if (contractToRemove) {
-            onRemove(contractToRemove);
+        if (contractToRemove && chainId) {
+            onRemove(contractToRemove, chainId);
             setContractToRemove(null);
             if (selectedAddress === contractToRemove) {
                 setSelectedAddress('');

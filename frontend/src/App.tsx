@@ -12,16 +12,17 @@ import { Rocket, Zap, Shield } from 'lucide-react';
 
 const Dashboard: React.FC = () => {
   const { account, chainId } = useWeb3();
-  const { contracts, addContract, removeContract } = useContractStorage();
+  const { contracts, addContract, removeContract } = useContractStorage(account || undefined);
 
   const handleDeploy = (address: string, name: string, abi: Abi) => {
-    if (chainId) {
+    if (chainId && account) {
       addContract({
         address,
         name,
         abi,
         chainId,
-        deployedAt: Date.now()
+        deployedAt: Date.now(),
+        deployer: account
       });
     }
   };
