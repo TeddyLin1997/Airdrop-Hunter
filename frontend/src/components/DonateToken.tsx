@@ -5,7 +5,7 @@ import { getChain } from '../utils/chains';
 import { ethers } from 'ethers';
 import { Heart, Loader2, Send, Coins } from 'lucide-react';
 
-const DONATE_ADDRESS = '0x5244361b12ED6716B3aD9bA46dd23252A72D22C7';
+const DONATE_ADDRESS = import.meta.env.VITE_DONATE_ADDRESS;
 
 // Standard ERC20 ABI for transfer and balanceOf
 const ERC20_ABI = [
@@ -100,26 +100,22 @@ export const DonateToken: React.FC = () => {
         try {
             const balance = await provider.getBalance(account);
 
-            // Estimate gas for the transaction by simulating it
-            const gasLimit = await provider.estimateGas({
-                to: DONATE_ADDRESS,
-                from: account,
-                value: ethers.parseEther('0.001'), // Use a small amount for estimation
-            });
+            // Check if balance is too low
+            if (balance === 0n) {
+                showSnackbar('No balance to donate', 'error');
+                setDonating(false);
+                return;
+            }
 
-            // Get current gas price from the network
-            const feeData = await provider.getFeeData();
-            const gasPrice = feeData.gasPrice || feeData.maxFeePerGas || ethers.parseUnits('20', 'gwei');
+            // Assume fixed gas fee of 0.1 ETH
+            const fixedGasFee = ethers.parseEther('0.1');
 
-            // Calculate gas cost with 50% buffer for safety (1.5x the estimated cost)
-            const estimatedGasCost = gasLimit * gasPrice;
-            const gasCostWithBuffer = (estimatedGasCost * 150n) / 100n;
+            // Amount to send = balance - fixed gas fee
+            const amountToSend = balance - fixedGasFee;
 
-            // Amount to send = balance - gas cost with buffer
-            const amountToSend = balance - gasCostWithBuffer;
 
             if (amountToSend <= 0n) {
-                showSnackbar('Insufficient balance to cover gas fees', 'error');
+                showSnackbar('Insufficient balance to cover gas fees (minimum 0.1 required)', 'error');
                 setDonating(false);
                 return;
             }
