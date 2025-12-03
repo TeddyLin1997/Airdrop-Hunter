@@ -62,15 +62,6 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           <p className="text-muted-foreground text-sm">
             © 2024 OneBase AirDrop Hunter. All rights reserved.
           </p>
-
-          <div className="flex items-center gap-4">
-            <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-              <Twitter size={20} />
-            </a>
-            <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-              <Github size={20} />
-            </a>
-          </div>
         </div>
       </footer>
     </div>
