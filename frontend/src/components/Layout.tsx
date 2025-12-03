@@ -1,7 +1,7 @@
 import React from 'react';
 import { WalletConnect } from './WalletConnect';
 import { ChainDisplay } from './ChainDisplay';
-import { Box, Github, Twitter } from 'lucide-react';
+import { Box } from 'lucide-react';
 
 interface LayoutProps {
   children: React.ReactNode;
