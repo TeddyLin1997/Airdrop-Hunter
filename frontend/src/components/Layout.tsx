@@ -60,7 +60,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           </div>
 
           <p className="text-muted-foreground text-sm">
-            © 2024 OneBase AirDrop Hunter. All rights reserved.
+            {`© ${new Date().getUTCFullYear()} OneBase AirDrop Hunter. All rights reserved.`}
           </p>
         </div>
       </footer>
